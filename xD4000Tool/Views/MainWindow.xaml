@@ -1,0 +1,213 @@
+<Window x:Class="xD4000Tool.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:xD4000Tool.ViewModels"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="720" Width="1200">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="#1F3A5F" Padding="10">
+            <DockPanel>
+                <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="{Binding Title}" />
+                <TextBlock Foreground="#DDE7F0" Margin="12,0,0,0" VerticalAlignment="Center" Text="{Binding Status}"/>
+            </DockPanel>
+        </Border>
+
+        <Border DockPanel.Dock="Top" Background="#F2F4F7" Padding="10" BorderBrush="#D0D7DE" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="IP" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" Text="{Binding Ip}" Margin="6,0,12,0"/>
+
+                <TextBlock Grid.Column="2" Text="Port" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="3" Text="{Binding Port}" Margin="6,0,12,0"/>
+
+                <TextBlock Grid.Column="4" Text="UnitId" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="5" Text="{Binding UnitId}" Margin="6,0,12,0"/>
+
+                <Button Grid.Column="6" Content="Connect" Command="{Binding ConnectCommand}" Padding="16,6" Margin="0,0,8,0"/>
+                <Button Grid.Column="7" Content="Disconnect" Command="{Binding DisconnectCommand}" Padding="16,6"/>
+
+                <CheckBox Grid.Column="8" Content="Enable Control" IsChecked="{Binding EnableControl}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Grid.Column="0" Background="#FFFFFF" BorderBrush="#D0D7DE" BorderThickness="0,0,1,0">
+                <StackPanel DockPanel.Dock="Top" Margin="10">
+                    <TextBlock Text="Search" FontWeight="Bold"/>
+                    <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"/>
+                </StackPanel>
+                <TreeView ItemsSource="{Binding Tree}" SelectedItemChanged="TreeView_SelectedItemChanged" Margin="10">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Name}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </DockPanel>
+
+            <TabControl Grid.Column="1" Margin="10">
+                <TabItem Header="Parameters">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button Content="Read Group" Command="{Binding ReadGroupCommand}" Margin="0,0,8,0"/>
+                            <Button Content="Write Selected" Command="{Binding WriteSelectedCommand}" Margin="0,0,8,0"/>
+                            <TextBlock Text="Edit numeric value in 'Edit' column" VerticalAlignment="Center" Foreground="#666"/>
+                        </StackPanel>
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding ParameterRows}" SelectedItem="{Binding SelectedRow}" AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Addr" Binding="{Binding Address}" IsReadOnly="True" Width="70"/>
+                                <DataGridTextColumn Header="Code" Binding="{Binding Code}" IsReadOnly="True" Width="80"/>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*"/>
+                                <DataGridTextColumn Header="Value" Binding="{Binding Value}" IsReadOnly="True" Width="160"/>
+                                <DataGridTextColumn Header="Edit" Binding="{Binding Edit, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                                <DataGridTextColumn Header="Units" Binding="{Binding Units}" IsReadOnly="True" Width="120"/>
+                                <DataGridTextColumn Header="Access" Binding="{Binding Access}" IsReadOnly="True" Width="70"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Operate">
+                    <Grid Margin="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <GroupBox Header="Control" Padding="10" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Frequency setpoint (LFR)" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBox Width="120" Text="{Binding LfrHz, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBlock Text="Hz" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    <Button Content="Write" Command="{Binding WriteSetpointCommand}" Margin="12,0,0,0"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding EtaText}" Margin="0,10,0,0"/>
+                                <Separator Margin="0,10,0,10"/>
+                                <TextBlock Text="Commands" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <Button Content="RUN" Command="{Binding RunCommand}" Width="90" Margin="0,0,8,0"/>
+                                    <Button Content="STOP" Command="{Binding StopCommand}" Width="90" Margin="0,0,8,0"/>
+                                    <Button Content="RESET" Command="{Binding ResetCommand}" Width="90"/>
+                                </StackPanel>
+                                <Separator Margin="0,10,0,10"/>
+                                <Button Content="Prepare switch to PC reference (FR1 = PC tool)" Command="{Binding PreparePcRefCommand}"/>
+                                <TextBlock Text="Policy: channel switching is blocked while RUNNING" Foreground="DarkOrange" Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Grid.Column="1" Header="Live Monitor" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="RFR" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding RfrHz, StringFormat={}{0:F1} Hz}"/>
+                                <TextBlock Text="ULN" Margin="0,10,0,0" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding UlnV, StringFormat={}{0:F1} V}"/>
+                                <TextBlock Text="VBUS" Margin="0,10,0,0" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding VbusV, StringFormat={}{0:F1} V}"/>
+                                <TextBlock Text="CRC" Margin="0,10,0,0" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding CrcDecoded}" TextWrapping="Wrap"/>
+                                <TextBlock Text="CCC" Margin="0,10,0,0" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding CccDecoded}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Diagnostics">
+                    <Grid Margin="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button Content="Refresh" Command="{Binding RefreshDiagnosticsCommand}" Margin="0,0,8,0"/>
+                            <TextBlock Text="Last fault (LFT):" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LastFault}" VerticalAlignment="Center" Margin="6,0,0,0" FontWeight="Bold"/>
+                        </StackPanel>
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding FaultHistory}" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="50"/>
+                                <DataGridTextColumn Header="Register" Binding="{Binding Register}" Width="90"/>
+                                <DataGridTextColumn Header="Fault Code" Binding="{Binding Code}" Width="120"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Scope/Trend">
+                    <Grid Margin="8">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button Content="Start" Command="{Binding StartTrendCommand}" Margin="0,0,8,0"/>
+                            <Button Content="Stop" Command="{Binding StopTrendCommand}"/>
+                            <TextBlock Text="Default: RFR + VBUS" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="#666"/>
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding TrendSeries}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <GroupBox Header="{Binding Name}" Margin="0,0,0,10" Padding="10">
+                                        <Canvas Height="120" Background="#FAFAFA" Loaded="TrendCanvas_Loaded" />
+                                    </GroupBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Project">
+                    <Grid Margin="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button Content="Backup Current Group" Command="{Binding BackupCommand}" Margin="0,0,8,0"/>
+                            <Button Content="Save Project" Command="{Binding SaveProjectCommand}" Margin="0,0,8,0"/>
+                            <Button Content="Load Project" Command="{Binding LoadProjectCommand}" Margin="0,0,8,0"/>
+                            <Button Content="Compare with Drive" Command="{Binding CompareCommand}" Margin="0,0,8,0"/>
+                            <Button Content="Restore Differences" Command="{Binding RestoreDiffCommand}"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1" Text="Restore is blocked while RUNNING (policy)." Foreground="DarkOrange" />
+                        <DataGrid Grid.Row="2" ItemsSource="{Binding DiffRows}" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Addr" Binding="{Binding Address}" Width="80"/>
+                                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="80"/>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="Project" Binding="{Binding ProjectValue}" Width="100"/>
+                                <DataGridTextColumn Header="Drive" Binding="{Binding DriveValue}" Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </DockPanel>
+</Window>
