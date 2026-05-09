@@ -1,1 +1,37 @@
 
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore "xD4000Tool/xD4000Tool.csproj"
+
+      - name: Publish
+        run: >
+          dotnet publish "xD4000Tool/xD4000Tool.csproj"
+          -c Release
+          -r win-x64
+          --self-contained true
+          /p:PublishSingleFile=true
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: xD4000Tool-win-x64
+          path: xD4000Tool/bin/Release/**/publish/
