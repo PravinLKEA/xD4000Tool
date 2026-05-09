@@ -4,9 +4,7 @@
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="PresentationFramework.Aero;component/themes/Aero.NormalColor.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            <!-- Theme dictionaries removed to prevent startup crash -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>
