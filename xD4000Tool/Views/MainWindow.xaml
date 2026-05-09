@@ -55,7 +55,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="0" Background="#FFFFFF" BorderBrush="#D0D7DE" BorderThickness="0,0,1,0">
+           <Border Grid.Column="0" Background="#FFFFFF" BorderBrush="#D0D7DE" BorderThickness="0,0,1,0">
+<DockPanel>
                 <StackPanel DockPanel.Dock="Top" Margin="10">
                     <TextBlock Text="Search" FontWeight="Bold"/>
                     <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,0"/>
@@ -66,8 +67,10 @@
                             <TextBlock Text="{Binding Name}" />
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
-                </TreeView>
-            </DockPanel>
+                </TreeView>         
+</DockPanel>
+</Border>
+
 
             <TabControl Grid.Column="1" Margin="10">
                 <TabItem Header="Parameters">
